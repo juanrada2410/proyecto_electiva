@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificar PIN</title>
+    {{-- Aquí irían tus estilos CSS --}}
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Verificar PIN</h1>
+        <p>Hemos enviado un PIN de 4 dígitos a tu correo. Introdúcelo a continuación.</p>
+
+        <form method="POST" action="{{ route('login.verifyPin') }}">
+            @csrf
+            <input type="hidden" name="document_number" value="{{ $document_number }}">
+            <div class="form-group">
+                <label for="pin">PIN de 4 dígitos</label>
+                <input type="text" id="pin" name="pin" required>
+                 @error('pin')
+                    <span class="error">{{ $message }}</span>
+                @enderror
+            </div>
+            <button type="submit">Ingresar</button>
+        </form>
+    </div>
+</body>
+</html>

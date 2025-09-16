@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tu PIN de Acceso</title>
+</head>
+<body>
+    <h1>Tu PIN para Banco de Bogotá</h1>
+    <p>Usa el siguiente PIN para iniciar sesión. Es válido por 10 minutos.</p>
+    <h2><strong>{{ $pin }}</strong></h2>
+    <p>Si no solicitaste este PIN, puedes ignorar este mensaje.</p>
+</body>
+</html>

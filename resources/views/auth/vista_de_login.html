@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión</title>
+    {{-- Aquí irían tus estilos CSS --}}
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Acceso al Sistema de Turnos</h1>
+        <p>Introduce tu número de documento para recibir un PIN de acceso en tu correo electrónico.</p>
+        
+        <form method="POST" action="{{ route('login.sendPin') }}">
+            @csrf
+            <div class="form-group">
+                <label for="document_number">Número de Documento</label>
+                <input type="text" id="document_number" name="document_number" required autofocus>
+                @error('document_number')
+                    <span class="error">{{ $message }}</span>
+                @enderror
+            </div>
+            <button type="submit">Enviar PIN</button>
+        </form>
+    </div>
+</body>
+</html>
