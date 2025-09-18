@@ -1,169 +1,79 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Turnos en Vivo - Banco de Bogotá</title>
-    
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600,700&display=swap" rel="stylesheet" />
-
+    <title>Gestión de Turnos Inteligente - Banco de Bogotá</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <style>
-        :root {
-            --banco-blue: #14327D;
-            --banco-yellow: #EBB932;
-            --banco-red: #CD3232;
-            --background-gray: #f4f6f9;
-            --text-dark: #212529;
-            --text-light: #ffffff;
-            --border-color: #dee2e6;
-        }
-        body {
-            font-family: 'Figtree', sans-serif;
-            background-color: var(--background-gray);
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            background-color: var(--text-light);
-            border-radius: 16px;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #102862, var(--banco-blue));
-            padding: 2rem 2.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 4px solid var(--banco-yellow);
-        }
-        .header .logo img {
-            height: 45px;
-            width: auto;
-        }
-        .header h1 {
-            color: var(--text-light);
-            font-size: 1.75rem;
-            margin: 0;
-            font-weight: 700;
-        }
-        .content {
-            padding: 2.5rem;
-        }
-        .turn-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: center;
-        }
-        .turn-table thead {
-            background-color: var(--banco-blue);
-            color: var(--text-light);
-        }
-        .turn-table th, .turn-table td {
-            padding: 1rem;
-            font-size: 1.1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .turn-table th {
-            font-weight: 600;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .turn-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        .turn-table .turn-code {
-            font-weight: 700;
-            font-size: 1.6rem;
-            color: var(--banco-red);
-        }
-        .actions {
-            padding: 1.5rem 2.5rem;
-            background-color: var(--background-gray);
-            text-align: center;
-            border-top: 1px solid #e0e0e0;
-        }
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.75rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1rem;
-            margin: 0 0.5rem;
-            transition: all 0.2s ease-in-out;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-primary {
-            background-color: var(--banco-yellow);
-            color: var(--banco-blue);
-            box-shadow: 0 4px 12px rgba(235, 185, 50, 0.3);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(235, 185, 50, 0.4);
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: var(--text-light);
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-    </style>
 </head>
-<body class="antialiased">
-    <div class="container">
-        <header class="header">
-            <div class="logo">
-                <img src="{{ asset('images/logo_banco_bogotá.png') }}" alt="Logo Banco de Bogotá">
+<body class="antialiased bg-light-gray">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="{{ asset('img/logo_banco_bogota.png') }}" alt="Logo Banco de Bogotá" class="h-8">
+                <span class="text-xl font-bold text-banco-blue">Banco de Bogotá</span>
             </div>
-            <h1>Monitor de Turnos</h1>
-        </header>
+            <div>
+                <a href="{{ route('login') }}" class="bg-banco-yellow text-banco-blue font-bold py-2 px-5 rounded-full hover:bg-yellow-400 transition">
+                    Iniciar Sesión
+                </a>
+            </div>
+        </nav>
+    </header>
 
-        <main class="content">
-            <table class="turn-table">
-                <thead>
-                    <tr>
-                        <th>Turno</th>
-                        <th>Servicio</th>
-                        <th>Módulo de Atención</th>
-                    </tr>
-                </thead>
-                <tbody id="turn-queue-body">
-                    
-                    @if($turns->isNotEmpty())
-                        @foreach($turns as $turn)
-                            <tr>
-                                <td class="turn-code">{{ $turn->turn_code }}</td>
-                                <td>{{ $turn->service->name }}</td>
-                                <td>Módulo 3</td>
-                            </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td colspan="3" style="padding: 3rem; font-size: 1.2rem; color: #6c757d;">No hay turnos en espera.</td>
-                        </tr>
-                    @endif
-                    </tbody>
-            </table>
-        </main>
+    <main class="container mx-auto px-6 py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-banco-blue">Gestión de Turnos Inteligente</h1>
+        <p class="mt-4 text-lg text-gray-600">Optimiza tu tiempo y evita filas. Solicita y gestiona tus turnos en tiempo real desde cualquier dispositivo.</p>
+        <div class="mt-8">
+            <a href="{{ route('login') }}" class="bg-banco-yellow text-banco-blue font-bold py-3 px-8 rounded-full text-lg hover:bg-yellow-400 transition">
+                Solicitar Turno
+            </a>
+        </div>
+    </main>
 
-        <footer class="actions">
-            <a href="{{ route('login') }}" class="btn btn-primary">Solicitar Turno</a>
-            <a href="#" class="btn btn-secondary">Soy Asesor</a>
-        </footer>
+    <div class="container mx-auto px-6 pb-20 grid md:grid-cols-3 gap-12">
+        <div class="md:col-span-2">
+            <h2 class="text-3xl font-bold text-banco-blue mb-6">Funcionalidades Principales</h2>
+            <div class="grid sm:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-banco-blue">Tiempo Real</h3>
+                    <p class="mt-2 text-gray-600">Visualiza los turnos actuales y estimaciones de tiempos de espera.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-banco-blue">Solicitud Online</h3>
+                    <p class="mt-2 text-gray-600">Pide tu turno desde tu dispositivo móvil sin necesidad de desplazarte.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-banco-blue">Notificaciones</h3>
+                    <p class="mt-2 text-gray-600">Recibe alertas cuando tu turno esté próximo para que no pierdas tu lugar.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-banco-blue">Cancelación Fácil</h3>
+                    <p class="mt-2 text-gray-600">Si tus planes cambian, cancela tu turno con un solo clic.</p>
+                </div>
+            </div>
+        </div>
+
+        <aside class="md:col-span-1 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-banco-blue mb-4 border-b pb-2">Cola en Vivo</h2>
+            <div id="turn-queue-body" class="space-y-3">
+                <div class="bg-banco-blue text-white p-4 rounded-lg flex justify-between items-center animate-pulse">
+                    <div>
+                        <span class="font-bold text-2xl">C-001</span>
+                        <span class="text-sm block text-banco-yellow">Caja</span>
+                    </div>
+                    <span class="font-semibold">Módulo 5</span>
+                </div>
+                <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+                    <span class="font-bold text-xl text-gray-800">A-012</span>
+                    <span class="text-sm text-gray-600">Asesoría</span>
+                </div>
+                <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+                    <span class="font-bold text-xl text-gray-800">P-005</span>
+                    <span class="text-sm text-gray-600">Créditos</span>
+                </div>
+            </div>
+        </aside>
     </div>
 </body>
 </html>
