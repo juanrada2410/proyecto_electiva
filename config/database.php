@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'null'),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +30,11 @@ return [
     */
 
     'connections' => [
-
+            'mongodb' => [
+                'driver' => 'mongodb',
+                'dsn' => env('DB_URI'),
+                'database' => env('DB_DATABASE', 'banco_bogota_turnos'),
+            ],
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
@@ -42,6 +46,8 @@ return [
             'synchronous' => null,
             'transaction_mode' => 'DEFERRED',
         ],
+
+        
 
         'mysql' => [
             'driver' => 'mysql',

@@ -20,8 +20,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'document_number', // <-- AÑADE ESTA LÍNEA
-        'phone',           // <-- AÑADE ESTA LÍNEA
+        'document_number', 
+        'phone',          
     ];
 
     /**
