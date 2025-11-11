@@ -14,16 +14,24 @@ class TurnController extends Controller
      */
     public function welcome()
     {
+        // 1. Consultamos los turnos activos (en espera o siendo atendidos)
+        $turns = Turn::whereIn('status', ['pending', 'attending'])
+                     ->with('service') // Precargamos la información del servicio
+                     ->orderBy('created_at', 'asc') // Ordenamos por llegada
+                     ->get(); // Ejecuta la consulta y obtiene los resultados
 
-
+        // 2. Pasamos la variable $turns (ahora definida) a la vista
         return view('welcome', compact('turns'));
     }
 
     /**
      * Muestra el panel del cliente.
+     * MODIFICADO: Ahora también carga la cola pública.
      */
     public function dashboard()
     {
+        // === 1. DATOS DEL TURNO PERSONAL ===
+        
         // Buscamos si el usuario actual tiene un turno activo
         $myTurn = Turn::where('user_id', Auth::id())
             ->whereIn('status', ['pending', 'attending'])
@@ -39,10 +47,22 @@ class TurnController extends Controller
                                ->count();
         }
 
+        // === 2. DATOS PARA EL FORMULARIO ===
+        
         // Obtenemos la lista de servicios para el formulario de solicitud
         $services = Service::where('is_active', true)->get();
 
-        return view('dashboard', compact('myTurn', 'turnsAhead', 'services'));
+        // === 3. DATOS DE LA COLA PÚBLICA (NUEVO) ===
+        
+        // Obtenemos los turnos públicos para la vista en vivo
+        $publicTurns = Turn::whereIn('status', ['pending', 'attending'])
+                           ->with('service')
+                           ->orderBy('created_at', 'asc')
+                           ->get();
+
+        // === 4. ENVIAR TODO A LA VISTA ===
+        
+        return view('dashboard', compact('myTurn', 'turnsAhead', 'services', 'publicTurns'));
     }
 
     /**

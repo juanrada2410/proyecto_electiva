@@ -31,7 +31,8 @@ Route::middleware(['auth'])->group(function () {
     
 
     Route::get('/dashboard', [TurnController::class, 'dashboard'])->name('dashboard');
-    Route::post('/turns', [TurnController::class, 'store'])->name('turns.store');
+    // Renombrado para seguir la convención de 'turns.'
+    Route::post('/turns', [TurnController::class, 'store'])->name('turns.store'); 
     Route::delete('/turns/{turn}', [TurnController::class, 'cancel'])->name('turns.cancel');
 
   
@@ -44,7 +45,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('users', AdminUserController::class);
-      
+        // Deberías añadir la ruta para AdminServiceController si la vas a usar
+        // Route::resource('services', AdminServiceController::class); 
     });
 
 });

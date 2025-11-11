@@ -2,14 +2,22 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+// aquí Uso el Authenticatable de MongoDB
+use MongoDB\Laravel\Auth\User as Authenticatable; 
 
-class User extends Authenticatable
+class User extends Authenticatable //  Extiendo el Authenticatable de MongoDB
 {
     use HasFactory, Notifiable;
+
+    /**
+     */
+    protected $connection = 'mongodb';
+     /**
+     */
+    protected $collection = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -17,11 +25,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'document_number', 
-        'phone',          
+        'name','email', 'password','document_number',  'phone',
+        'role', // Agregado para el registro
+        'pin', //  Agregado para el login con PIN
+        'pin_expires_at', //  Agregado para el login con PIN
     ];
 
     /**
@@ -32,6 +39,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'pin', 
     ];
 
     /**
@@ -44,6 +52,18 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'pin_expires_at' => 'datetime', 
+            'created_at' => 'datetime', 
+            'updated_at' => 'datetime', 
+            
         ];
+    }
+
+    /**
+     * Un usuario (cliente) puede tener muchos turnos.
+     */
+    public function turns(): HasMany
+    {
+        return $this->hasMany(Turn::class);
     }
 }
