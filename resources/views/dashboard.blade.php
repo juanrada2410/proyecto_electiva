@@ -139,7 +139,7 @@
                                                     No hay turnos en espera en este momento.
                                                 </td>
                                             </tr>
-                                        @endForesle
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>

@@ -2,108 +2,150 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendLoginPin;
+use App\Models\User;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log; // Importante
 
 class LoginController extends Controller
 {
     /**
-     * Muestra el formulario de login/registro.
+     * Muestra el formulario de login.
      */
     public function showLoginForm()
     {
-        return view('login');
+        return view('login'); 
     }
 
     /**
-     * Muestra el formulario para introducir el PIN.
+     * Maneja la solicitud de login.
+     */
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            
+            // --- INICIO DE CORRECCIÓN ---
+            // 1. Guardamos los datos que necesitamos ANTES de cerrar sesión
+            $userId = $user->id;
+            $userEmail = $user->email;
+            
+            // 2. Generar y guardar PIN
+            $pin = random_int(100000, 999999);
+            $user->login_pin = $pin;
+            $user->pin_expires_at = now()->addMinutes(10);
+            $user->save();
+
+            // 3. Log de depuración
+            Log::info('--- PIN DE ACCESO (DEPURACIÓN): ' . $pin . ' ---');
+            
+            // 4. Desconectar temporalmente
+            // ¡Esta línea se movió! Cerramos la sesión ANTES de poner los nuevos datos.
+            Auth::logout();
+
+            // 5. Guardar ID de usuario y email en la NUEVA sesión
+            Session::put('user_id_for_pin_verification', $userId);
+            Session::put('email_for_pin_verification', $userEmail); // Guardamos el email también
+            Session::save(); // Forzar el guardado
+
+            Log::info('DIAGNÓSTICO (login): Sesión guardada para ID: ' . $userId);
+            // --- FIN DE CORRECCIÓN ---
+
+            // 6. Redirigir a la vista de verificación de PIN
+            // Ya no usamos ->with('email'), lo leeremos desde la sesión
+            return redirect()->route('verify-pin'); 
+        }
+
+        return redirect()->back()->withErrors([
+            'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+        ])->withInput($request->only('email'));
+    }
+
+    /**
+     * Muestra el formulario de verificación de PIN.
      */
     public function showPinForm()
     {
-        // Si no hay un documento en la sesión, redirige al login
-        if (!Session::has('document_for_verification')) {
-            return redirect()->route('login')->with('error', 'Por favor, introduce tu documento primero.');
-        }
-        return view('verify-pin');
-    }
-
-    /**
-     * Busca al usuario, genera un PIN y lo redirige a la página de verificación.
-     */
-    public function sendPin(Request $request)
-    {
-        $request->validate(['document_number' => 'required|string']);
-
-        $user = User::where('document_number', $request->document_number)->first();
-
-        if (!$user) {
-            return back()->withErrors(['document_number' => 'El número de documento no está registrado.']);
-        }
-
-        // Genera un PIN de 4 dígitos
-        $pin = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+        Log::info('DIAGNÓSTICO (showPinForm): Entrando. Revisando la sesión...');
         
-        // Guarda el PIN y su fecha de expiración (ej. 5 minutos)
-        $user->pin = $pin;
-        $user->pin_expires_at = now()->addMinutes(5);
-        $user->save();
-
-        // **LA LÍNEA CLAVE:** Guarda el documento en la sesión para el siguiente paso
-        Session::put('document_for_verification', $user->document_number);
-
-        // Guarda el PIN en el log para que puedas verlo durante el desarrollo
-        Log::info('PIN de acceso para ' . $user->email . ': ' . $pin);
-
-        // Redirige al usuario a la página para que ingrese el PIN
-        return redirect()->route('verify-pin');
+        if (!Session::has('user_id_for_pin_verification')) {
+            Log::warning('DIAGNÓSTICO (showPinForm): ¡FALLO! Sesión no encontrada. Rebotando a login.');
+            return redirect()->route('login')->withErrors(['email' => 'Por favor, inicia sesión primero.']);
+        }
+        
+        Log::info('DIAGNÓSTICO (showPinForm): ¡ÉXITO! Sesión encontrada. Mostrando formulario de PIN.');
+        
+        // --- INICIO DE CORRECCIÓN ---
+        // Leemos el email desde la sesión que guardamos
+        $email = Session::get('email_for_pin_verification'); 
+        // --- FIN DE CORRECCIÓN ---
+        
+        return view('auth.verify-pin', ['email' => $email]);
     }
 
     /**
-     * Verifica el PIN y, si es correcto, inicia la sesión del usuario.
+     * Verifica el PIN ingresado.
      */
     public function verifyPin(Request $request)
     {
-        $request->validate(['pin' => 'required|digits:4']);
+        $request->validate([
+            'pin' => 'required|numeric|digits:6',
+        ]);
 
-        // Recuperamos el documento que guardamos en la sesión
-        $documentNumber = Session::get('document_for_verification');
-
-        if (!$documentNumber) {
-            return redirect()->route('login')->with('error', 'La sesión ha expirado. Por favor, inténtalo de nuevo.');
+        $userId = Session::pull('user_id_for_pin_verification');
+        Session::forget('email_for_pin_verification'); // Limpiamos el email
+        
+        if (!$userId) {
+            return redirect()->route('login')->withErrors(['email' => 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.']);
         }
 
-        $user = User::where('document_number', $documentNumber)->first();
+        $user = User::find($userId);
 
-        if (!$user || $user->pin !== $request->pin) {
-            return back()->withErrors(['pin' => 'El PIN es incorrecto.']);
+        if (!$user || $user->login_pin !== $request->pin) {
+            // Si el PIN es incorrecto, lo re-guarda en sesión para reintentar
+            Session::put('user_id_for_pin_verification', $userId); 
+            Session::put('email_for_pin_verification', $user->email ?? null); // Guardamos de nuevo el email
+            return redirect()->back()->withErrors(['pin' => 'El PIN ingresado es incorrecto.'])->with('email', $user->email ?? null);
         }
 
         if (now()->gt($user->pin_expires_at)) {
-            return back()->withErrors(['pin' => 'El PIN ha expirado. Solicita uno nuevo.']);
+            return redirect()->route('login')->withErrors(['email' => 'El PIN ha expirado. Por favor, inicia sesión de nuevo.']);
         }
 
-        // Limpia el PIN después de usarlo
-        $user->pin = null;
+        // Limpiar PIN
+        $user->login_pin = null;
         $user->pin_expires_at = null;
         $user->save();
-        
-        // Limpia la variable de sesión
-        Session::forget('document_for_verification');
 
-        // Inicia la sesión del usuario
+        // ¡Éxito! Iniciar sesión del usuario
         Auth::login($user);
+        $request->session()->regenerate();
 
-        // Redirige según el rol del usuario
+        // Redirigir basado en rol
+        return redirect()->intended($this->redirectPath());
+    }
+
+    /**
+     * Determina a dónde redirigir después del login.
+     */
+    protected function redirectPath()
+    {
+        $user = Auth::user();
         if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+            return '/admin/dashboard';
         } elseif ($user->role === 'cashier') {
-            return redirect()->route('cashier.dashboard');
-        } else {
-            return redirect()->route('dashboard');
+            return '/cashier/dashboard';
         }
+        
+        return '/dashboard'; 
     }
 
     /**
