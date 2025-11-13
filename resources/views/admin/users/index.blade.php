@@ -13,12 +13,13 @@
             <nav class="flex-grow p-4 space-y-2">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Dashboard</a>
                 <a href="{{ route('admin.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg bg-white/20 font-semibold">Usuarios</a>
+                <a href="{{ route('admin.audits.index') }}" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Auditorías</a>
                 {{-- <a href="#" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Servicios</a> --}}
             </nav>
             <div class="p-4 border-t border-white/20">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full text-left">Salir</button>
+                    <button type="submit" class="w-full text-left py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Salir</button>
                 </form>
             </div>
         </aside>
@@ -29,6 +30,13 @@
                 <span class="font-semibold">{{ Auth::user()->name }}</span>
             </header>
             <main class="flex-1 p-8 overflow-y-auto">
+                <!-- Mensaje de éxito -->
+                @if(session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-banco-blue">Usuarios del Sistema</h2>
                     {{-- <a href="#" class="bg-banco-yellow text-banco-blue font-bold py-2 px-5 rounded-full hover:bg-yellow-400 transition">Crear Usuario</a> --}}
@@ -60,7 +68,9 @@
                                             {{ ucfirst($user->role) }}
                                         </span>
                                     </td>
-                                    <td class="p-4"><a href="#" class="text-banco-blue font-semibold hover:underline">Editar</a></td>
+                                    <td class="p-4">
+                                        <a href="{{ route('admin.users.edit', $user->_id) }}" class="text-banco-blue font-semibold hover:underline">Editar</a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>

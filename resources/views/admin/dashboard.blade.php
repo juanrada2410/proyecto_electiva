@@ -13,12 +13,13 @@
             <nav class="flex-grow p-4 space-y-2">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg bg-white/20 font-semibold">Dashboard</a>
                 <a href="{{ route('admin.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Usuarios</a>
+                <a href="{{ route('admin.audits.index') }}" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Auditorías</a>
                 {{-- <a href="#" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Servicios</a> --}}
             </nav>
             <div class="p-4 border-t border-white/20">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full text-left">Salir</button>
+                    <button type="submit" class="w-full text-left py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Salir</button>
                 </form>
             </div>
         </aside>

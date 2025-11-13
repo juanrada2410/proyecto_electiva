@@ -8,9 +8,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 // aquí Uso el Authenticatable de MongoDB
 use MongoDB\Laravel\Auth\User as Authenticatable; 
 
+// --- AÑADIDO PARA AUDITORÍA ---
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+// ------------------------------
+
 class User extends Authenticatable //  Extiendo el Authenticatable de MongoDB
 {
     use HasFactory, Notifiable;
+    // use LogsActivity; // <-- DESACTIVADO TEMPORALMENTE
 
     /**
      */
@@ -62,4 +68,14 @@ class User extends Authenticatable //  Extiendo el Authenticatable de MongoDB
     {
         return $this->hasMany(Turn::class);
     }
+
+    // --- AUDITORÍA DESACTIVADA TEMPORALMENTE ---
+    // public function getActivitylogOptions(): LogOptions
+    // {
+    //     return LogOptions::defaults()
+    //         ->logOnly(['name', 'email', 'document_number', 'phone', 'role'])
+    //         ->logOnlyDirty()
+    //         ->setDescriptionForEvent(fn(string $eventName) => "Se ha {$eventName} el usuario {$this->name}");
+    // }
+    // ------------------------------
 }

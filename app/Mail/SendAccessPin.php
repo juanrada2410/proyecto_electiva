@@ -42,8 +42,7 @@ class SendAccessPin extends Mailable
     public function content(): Content
     {
         return new Content(
-            // Apunta a la vista que crearemos en el siguiente paso
-            view: 'emails.access-pin',
+            view: 'emails.login-pin',
         );
     }
 

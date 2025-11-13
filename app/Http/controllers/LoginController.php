@@ -9,6 +9,7 @@ use App\Mail\SendAccessPin; // CORREGIDO: El nombre correcto de tu Mailable
 use App\Models\User;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\AuditHelper;
 
 class LoginController extends Controller
 {
@@ -25,6 +26,8 @@ class LoginController extends Controller
      */
     public function sendPin(Request $request)
     {
+        // ... (Tu código de sendPin sigue igual) ...
+        
         // 1. Validar que tengamos un número de documento
         $credentials = $request->validate([
             'document_number' => 'required|string|max:20',
@@ -44,7 +47,7 @@ class LoginController extends Controller
         $pin = random_int(100000, 999999); // PIN de 6 dígitos
 
         $user->pin = $pin;
-        $user->pin_expires_at = now()->addMinutes(10);
+        $user->pin_expires_at = now()->addMinutes(3);
         $user->save();
 
         // 5. Determinar email (soporta email como string o array)
@@ -62,9 +65,11 @@ class LoginController extends Controller
 
         // 6. Enviar el email con el PIN
         try {
-            Mail::to($email)->send(new SendAccessPin($pin)); // CORREGIDO: Usar la clase correcta
+            Mail::to($email)->send(new SendAccessPin($pin));
+            Log::info('EMAIL ENVIADO EXITOSAMENTE a ' . $email);
         } catch (\Exception $e) {
             Log::error('FALLO AL ENVIAR EMAIL: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             // Continuar para permitir depuración en entorno local
         }
 
@@ -129,17 +134,20 @@ class LoginController extends Controller
             // Limpiar PIN expirado
             $user->pin = null;
             $user->pin_expires_at = null;
-            $user->save();
+            $user->save(); // <-- ESTO TAMBIÉN REGISTRA UN "updated"
             return redirect()->route('login')->withErrors(['document_number' => 'El PIN ha expirado. Por favor, solicita uno nuevo.']);
         }
 
         // Limpiar PIN y loguear
         $user->pin = null;
         $user->pin_expires_at = null;
-        $user->save();
+        $user->save(); // <-- Y ESTO TAMBIÉN REGISTRA UN "updated"
 
         Auth::login($user);
         request()->session()->regenerate();
+
+        // Registrar auditoría
+        AuditHelper::log('login', 'El usuario inició sesión');
 
         return redirect()->intended($this->redirectPath());
     }
@@ -164,6 +172,9 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
+        // Registrar auditoría antes de cerrar sesión
+        AuditHelper::log('logout', 'El usuario cerró sesión');
+        
         Auth::logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();

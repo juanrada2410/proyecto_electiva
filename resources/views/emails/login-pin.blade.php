@@ -28,7 +28,7 @@
             Hola,
         </div>
         <p>Has solicitado iniciar sesión en el Sistema de Turnos. Usa el siguiente PIN para completar tu acceso.</p>
-        <p>Este PIN es válido por 10 minutos.</p>
+        <p><strong>Este PIN es válido por 3 minutos.</strong></p>
 
         <div class="pin-code">
             {{ $pin }}

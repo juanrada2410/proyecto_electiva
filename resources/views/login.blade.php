@@ -10,7 +10,12 @@
 <body class="bg-light-gray flex items-center justify-center min-h-screen">
     <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-4 m-4" x-data="{ tab: 'login' }">
         <div class="text-center mb-6">
-            <img src="{{ asset('img/logo_banco_bogota.png') }}" alt="Logo Banco de Bogotá" class="h-10 mx-auto">
+            <a href="{{ route('welcome') }}" class="inline-block mb-4">
+                <img src="{{ asset('img/logo_banco_bogota.png') }}" alt="Logo Banco de Bogotá" class="h-10 mx-auto">
+            </a>
+            <a href="{{ route('welcome') }}" class="text-sm text-gray-500 hover:text-banco-blue transition">
+                ← Volver al inicio
+            </a>
         </div>
 
         <div class="flex border-b">

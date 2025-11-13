@@ -57,21 +57,34 @@
         <aside class="md:col-span-1 bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-2xl font-bold text-banco-blue mb-4 border-b pb-2">Cola en Vivo</h2>
             <div id="turn-queue-body" class="space-y-3">
-                <div class="bg-banco-blue text-white p-4 rounded-lg flex justify-between items-center animate-pulse">
-                    <div>
-                        <span class="font-bold text-2xl">C-001</span>
-                        <span class="text-sm block text-banco-yellow">Caja</span>
+                @if($currentTurns->count() > 0)
+                    @foreach($currentTurns as $turn)
+                        <div class="bg-banco-blue text-white p-4 rounded-lg flex justify-between items-center animate-pulse">
+                            <div>
+                                <span class="font-bold text-2xl">{{ $turn->turn_code }}</span>
+                                <span class="text-sm block text-banco-yellow">{{ $turn->service->name ?? 'Servicio' }}</span>
+                            </div>
+                            <span class="font-semibold">Atendiendo</span>
+                        </div>
+                    @endforeach
+                @endif
+
+                @forelse($waitingTurns as $turn)
+                    <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-xl text-gray-800">{{ $turn->turn_code }}</span>
+                            <span class="text-xs block text-gray-500">{{ $turn->service->name ?? 'Servicio' }}</span>
+                        </div>
+                        <span class="text-sm text-gray-600">En espera</span>
                     </div>
-                    <span class="font-semibold">Módulo 5</span>
-                </div>
-                <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
-                    <span class="font-bold text-xl text-gray-800">A-012</span>
-                    <span class="text-sm text-gray-600">Asesoría</span>
-                </div>
-                <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
-                    <span class="font-bold text-xl text-gray-800">P-005</span>
-                    <span class="text-sm text-gray-600">Créditos</span>
-                </div>
+                @empty
+                    @if($currentTurns->count() == 0)
+                        <div class="text-center py-8 text-gray-400">
+                            <p>No hay turnos activos</p>
+                            <p class="text-sm mt-2">Solicita tu turno para comenzar</p>
+                        </div>
+                    @endif
+                @endforelse
             </div>
         </aside>
     </div>
