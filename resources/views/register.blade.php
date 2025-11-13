@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Banco de Bogotá</title>
+    <link rel="icon" type="image/png" href="{{ asset('img/logo_banco_bogota.png') }}">
     @vite(['resources/css/app.css'])
     <style>
         body { font-family: 'Figtree', sans-serif; background-color: #f3f4f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px 0; }

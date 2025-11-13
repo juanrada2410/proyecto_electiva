@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <title>Panel de Cajero - Banco de Bogotá</title>
+    <link rel="icon" type="image/png" href="{{ asset('img/logo_banco_bogota.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-light-gray">

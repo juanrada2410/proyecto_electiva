@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <title>Administración - Banco de Bogotá</title>
+    <link rel="icon" type="image/png" href="{{ asset('img/logo_banco_bogota.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-light-gray">
@@ -13,8 +14,8 @@
             <nav class="flex-grow p-4 space-y-2">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg bg-white/20 font-semibold">Dashboard</a>
                 <a href="{{ route('admin.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Usuarios</a>
+                <a href="{{ route('admin.services.index') }}" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Servicios</a>
                 <a href="{{ route('admin.audits.index') }}" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Auditorías</a>
-                {{-- <a href="#" class="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition">Servicios</a> --}}
             </nav>
             <div class="p-4 border-t border-white/20">
                 <form action="{{ route('logout') }}" method="POST">
