@@ -6,19 +6,20 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope; // Importar Envelope
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendLoginPin extends Mailable
+class SendAccessPin extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $pin;
+    /**
+     * La variable pública estará disponible en la vista del correo.
+     */
+    public string $pin;
 
     /**
      * Create a new message instance.
-     *
-     * @param string $pin
      */
     public function __construct(string $pin)
     {
@@ -27,12 +28,11 @@ class SendLoginPin extends Mailable
 
     /**
      * Get the message envelope.
-     * CORREGIDO: Se añadió 'function' y se renombró 'newEnvelope' a 'envelope'.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Tu Código de Acceso - Banco de Bogotá',
+            subject: 'Tu PIN de Acceso',
         );
     }
 
@@ -42,10 +42,8 @@ class SendLoginPin extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.login-pin', // Hace referencia a resources/views/emails/login-pin.blade.php
-            with: [
-                'pin' => $this->pin,
-            ],
+            // Apunta a la vista que crearemos en el siguiente paso
+            view: 'emails.access-pin',
         );
     }
 

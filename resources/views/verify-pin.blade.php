@@ -11,7 +11,12 @@
         <div class="text-center mb-8">
             <img src="{{ asset('img/logo_banco_bogota.png') }}" alt="Logo Banco de Bogotá" class="h-10 mx-auto mb-4">
             <h1 class="text-2xl font-bold text-banco-blue">Verificar Código de Acceso</h1>
-            <p class="text-gray-600 mt-2">Hemos enviado un PIN a tu correo. Revisa tu log (`storage/logs/laravel.log`) para obtenerlo.</p>
+            <p class="text-gray-600 mt-2">
+                Hemos enviado un PIN de 6 dígitos a tu correo.
+                @if(env('APP_DEBUG', false))
+                    (Modo Debug: Revisa tu log en `storage/logs/laravel.log` para verlo al instante).
+                @endif
+            </p>
         </div>
 
         @if($errors->any())
@@ -21,11 +26,11 @@
             </div>
         @endif
 
-        <form action="{{ route('verify-pin') }}" method="POST">
+        <form action="{{ route('login.verifyPin') }}" method="POST">
             @csrf
             <div>
-                <label for="pin" class="sr-only">PIN de 4 dígitos</label>
-                <input type="tel" name="pin" id="pin" class="block w-full text-center text-4xl font-bold tracking-[1em] p-4 border-2 border-gray-300 rounded-lg focus:ring-banco-yellow focus:border-banco-yellow transition" maxlength="4" pattern="[0-9]{4}" required autofocus>
+                <label for="pin" class="sr-only">PIN de 6 dígitos</label>
+                <input type="tel" name="pin" id="pin" class="block w-full text-center text-3xl font-bold tracking-[0.5em] p-4 border-2 border-gray-300 rounded-lg focus:ring-banco-yellow focus:border-banco-yellow transition" maxlength="6" pattern="[0-9]{6}" required autofocus>
             </div>
             
             <button type="submit" class="w-full mt-6 bg-banco-yellow text-banco-blue font-bold py-3 rounded-lg hover:bg-yellow-400 transition-transform transform hover:scale-105">

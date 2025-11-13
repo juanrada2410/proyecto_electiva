@@ -45,19 +45,15 @@ class User extends Authenticatable //  Extiendo el Authenticatable de MongoDB
     /**
      * Get the attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string,string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'pin_expires_at' => 'datetime', 
-            'created_at' => 'datetime', 
-            'updated_at' => 'datetime', 
-            
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'pin_expires_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     /**
      * Un usuario (cliente) puede tener muchos turnos.

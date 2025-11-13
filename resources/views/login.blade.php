@@ -23,17 +23,16 @@
         </div>
 
         <div x-show="tab === 'login'" class="p-6">
-             <form action="{{ route('login') }}" method="POST" class="space-y-6">
+             
+             <form action="{{ route('login.sendPin') }}" method="POST" class="space-y-6">
                 @csrf
                 <div>
                     <label for="document_number" class="block text-sm font-medium text-gray-700">Número de Documento</label>
-                    <input type="text" name="document_number" id="document_number" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-banco-yellow focus:border-banco-yellow" required>
+                    <input type="text" name="document_number" id="document_number" value="{{ old('document_number') }}" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-banco-yellow focus:border-banco-yellow" required>
                     
-                    {{-- LÍNEA CLAVE AÑADIDA PARA MOSTRAR EL ERROR --}}
                     @error('document_number')
                         <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
                     @enderror
-
                 </div>
                 <button type="submit" class="w-full bg-banco-yellow text-banco-blue font-bold py-3 rounded-lg hover:bg-yellow-400 transition">
                     Enviar PIN de Acceso
@@ -42,22 +41,21 @@
         </div>
 
         <div x-show="tab === 'register'" x-cloak class="p-6">
-            {{-- Aquí va tu formulario de registro, asegúrate de que también tenga la directiva @error para cada campo --}}
             <form action="{{ route('register') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
                     <label for="name">Nombre Completo</label>
-                    <input type="text" name="name" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm" required>
+                    <input type="text" name="name" value="{{ old('name') }}" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm" required>
                     @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                  <div>
-                    <label for="document_number">Número de Documento</label>
-                    <input type="text" name="document_number" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm" required>
+                    <label for="document_number_reg">Número de Documento</label>
+                    <input type="text" name="document_number" id="document_number_reg" value="{{ old('document_number') }}" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm" required>
                     @error('document_number') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="email">Correo Electrónico</label>
-                    <input type="email" name="email" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm" required>
+                    <input type="email" name="email" value="{{ old('email') }}" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm" required>
                     @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <button type="submit" class="w-full bg-banco-blue text-white font-bold py-3 rounded-lg hover:bg-opacity-90 transition">

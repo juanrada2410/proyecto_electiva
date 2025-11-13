@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// --- ¡TODAS ESTAS LÍNEAS ESTÁN CORREGIDAS! ---
+// --- Controladores ---
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TurnController;
-use App\Http\Controllers\DashboardController; // <- Se añadió esta
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
@@ -25,9 +25,11 @@ use App\Http\Controllers\Cashier\DashboardController as CashierDashboardControll
 
 // Rutas de Autenticación (Login)
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/', [LoginController::class, 'login']);
+// CORREGIDO: Se renombró el método a 'sendPin' y se le dio un nombre a la ruta POST
+Route::post('/', [LoginController::class, 'sendPin'])->name('login.sendPin'); 
 Route::get('/verify-pin', [LoginController::class, 'showPinForm'])->name('verify-pin');
-Route::post('/verify-pin', [LoginController::class, 'verifyPin']);
+// CORREGIDO: Se le dio un nombre a la ruta POST de verificación
+Route::post('/verify-pin', [LoginController::class, 'verifyPin'])->name('login.verifyPin');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Ruta de Registro (Register)
