@@ -85,10 +85,23 @@ class UserController extends Controller
             $user->password = Hash::make($validated['password']);
         }
 
+        $oldData = [
+            'name' => $user->getOriginal('name'),
+            'email' => $user->getOriginal('email'),
+            'role' => $user->getOriginal('role')
+        ];
+        
         $user->save();
 
-        // Registrar auditoría
-        AuditHelper::log('user_update', "Usuario {$user->name} actualizado");
+        // Registrar auditoría con detalles de cambios
+        $changes = [];
+        if ($oldData['name'] != $user->name) $changes[] = "nombre";
+        if ($oldData['email'] != $user->email) $changes[] = "email";
+        if ($oldData['role'] != $user->role) $changes[] = "rol";
+        if (!empty($validated['password'])) $changes[] = "contraseña";
+        
+        $changesText = !empty($changes) ? " (cambios: " . implode(', ', $changes) . ")" : "";
+        AuditHelper::log('user_update', "Actualizó usuario {$user->name}{$changesText}");
 
         return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado correctamente');
     }

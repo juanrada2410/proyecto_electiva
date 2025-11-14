@@ -32,6 +32,68 @@ class AuditController extends Controller
         $audits = $query->paginate(20);
         $actions = AuditLog::distinct('action')->pluck('action');
 
-        return view('admin.audits.index', compact('audits', 'actions'));
+        // Datos para gráficas
+        // Acciones por tipo
+        $actionCounts = AuditLog::raw(function($collection) {
+            return $collection->aggregate([
+                ['$group' => ['_id' => '$action', 'count' => ['$sum' => 1]]],
+                ['$sort' => ['count' => -1]],
+                ['$limit' => 10]
+            ]);
+        });
+
+        $actionLabels = [];
+        $actionData = [];
+        foreach ($actionCounts as $item) {
+            $actionLabels[] = ucfirst($item->_id);
+            $actionData[] = $item->count;
+        }
+
+        // Actividad por día (últimos 7 días)
+        $dailyActivity = AuditLog::raw(function($collection) {
+            $sevenDaysAgo = new \MongoDB\BSON\UTCDateTime(strtotime('-7 days') * 1000);
+            return $collection->aggregate([
+                ['$match' => ['created_at' => ['$gte' => $sevenDaysAgo]]],
+                ['$group' => [
+                    '_id' => ['$dateToString' => ['format' => '%Y-%m-%d', 'date' => '$created_at']],
+                    'count' => ['$sum' => 1]
+                ]],
+                ['$sort' => ['_id' => 1]]
+            ]);
+        });
+
+        $dailyLabels = [];
+        $dailyData = [];
+        foreach ($dailyActivity as $item) {
+            $dailyLabels[] = date('d/m', strtotime($item->_id));
+            $dailyData[] = $item->count;
+        }
+
+        // Usuarios más activos
+        $topUsers = AuditLog::raw(function($collection) {
+            return $collection->aggregate([
+                ['$group' => ['_id' => '$user_name', 'count' => ['$sum' => 1]]],
+                ['$sort' => ['count' => -1]],
+                ['$limit' => 5]
+            ]);
+        });
+
+        $userLabels = [];
+        $userData = [];
+        foreach ($topUsers as $item) {
+            $userLabels[] = $item->_id;
+            $userData[] = $item->count;
+        }
+
+        return view('admin.audits.index', compact(
+            'audits', 
+            'actions',
+            'actionLabels',
+            'actionData',
+            'dailyLabels',
+            'dailyData',
+            'userLabels',
+            'userData'
+        ));
     }
 }

@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash; // Usaremos Hash para el password, aunque no lo usemos para login
+use Illuminate\Support\Facades\Hash;
+use App\Helpers\AuditHelper;
 
 class RegisterController extends Controller
 {
@@ -36,10 +37,11 @@ class RegisterController extends Controller
             'document_number' => $request->document_number,
             'email' => $request->email,
             'phone' => $request->phone,
-            // Por seguridad, siempre es bueno asignar un password aleatorio
-            // aunque el login sea sin contraseña.
             'password' => Hash::make(uniqid()), 
         ]);
+
+        // Registrar auditoría (sin usuario autenticado, se registra como Sistema)
+        AuditHelper::log('user_register', "Nuevo usuario registrado: {$user->name} ({$user->email})");
 
         // 3. Redirección a la página de login con un mensaje de éxito
         return redirect()->route('login')->with('success', '¡Registro exitoso! Ahora puedes iniciar sesión con tu número de documento.');

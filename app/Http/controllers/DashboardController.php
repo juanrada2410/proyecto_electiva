@@ -37,8 +37,9 @@ class DashboardController extends Controller
         // 4. Calcular turnos por delante (si el usuario tiene un turno)
         $turnsAhead = 0;
         if ($myTurn && $myTurn->status == 'waiting') {
+            // Contar turnos del mismo servicio que están siendo atendidos o en espera antes que el mío
             $turnsAhead = Turn::where('service_id', $myTurn->service_id)
-                              ->where('status', 'waiting')
+                              ->whereIn('status', ['waiting', 'attending'])
                               ->where('created_at', '<', $myTurn->created_at)
                               ->count();
         }

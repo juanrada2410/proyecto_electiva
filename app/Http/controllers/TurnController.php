@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\turn as Turn; //
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use App\Helpers\AuditHelper;
 
 class TurnController extends Controller
 {
@@ -58,6 +59,9 @@ class TurnController extends Controller
             'status' => 'waiting',
         ]);
 
+        // Registrar auditoría
+        AuditHelper::log('turn_request', "Solicitó turno {$turnCode} para {$service->name}");
+
         // (Opcional, para broadcasting)
         // event(new TurnQueueUpdated());
 
@@ -79,7 +83,11 @@ class TurnController extends Controller
             return redirect()->back()->with('error', 'Este turno ya no puede ser cancelado.');
         }
 
+        $turnCode = $turn->turn_code;
         $turn->update(['status' => 'cancelled']);
+        
+        // Registrar auditoría
+        AuditHelper::log('turn_cancel', "Canceló su turno {$turnCode}");
         
         // (Opcional, para broadcasting)
         // event(new TurnQueueUpdated());

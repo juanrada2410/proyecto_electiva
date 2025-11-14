@@ -76,6 +76,9 @@ class LoginController extends Controller
         // 7. Log de depuración (solo para desarrollo)
         Log::info('PIN DE ACCESO (DEPURACIÓN) PARA ' . $email . ': ' . $pin);
 
+        // Registrar auditoría de solicitud de PIN
+        AuditHelper::log('pin_request', "Usuario {$user->name} solicitó PIN de acceso");
+
         // 8. Desconectar cualquier sesión activa
         Auth::logout();
 

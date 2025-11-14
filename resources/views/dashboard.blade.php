@@ -9,20 +9,20 @@
 </head>
 <body class="h-full">
     <div class="min-h-full">
-        <nav class="bg-blue-900 shadow-md">
+        <nav class="bg-banco-blue shadow-lg">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <img class="h-12 w-auto" src="{{ asset('img/logo_banco_bogota.png') }}" alt="Logo Banco">
+                            <img class="h-10 w-auto" src="{{ asset('img/logo_banco_bogota.png') }}" alt="Logo Banco">
                         </div>
-                        <span class="text-white font-semibold text-xl ml-4">Sistema de Turnos</span>
+                        <span class="text-white font-bold text-xl ml-4">Sistema de Turnos</span>
                     </div>
-                    <div class="flex items-center">
-                        <span class="text-gray-300 mr-4">Hola, {{ Auth::user()->name }}</span>
+                    <div class="flex items-center gap-4">
+                        <span class="text-white font-medium">Hola, {{ Auth::user()->name }}</span>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700">
+                            <button type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 transition">
                                 Cerrar Sesión
                             </button>
                         </form>
@@ -46,21 +46,25 @@
                     <div class="md:col-span-1 space-y-6">
                         
                         @if ($myTurn)
-                        <div class="bg-white overflow-hidden shadow rounded-lg">
-                            <div class="bg-blue-600 px-4 py-5 sm:p-6">
-                                <h3 class="text-lg font-medium leading-6 text-white">Tu Turno Actual</h3>
+                        <div class="bg-white overflow-hidden shadow-lg rounded-xl border-2 border-banco-blue">
+                            <div class="bg-gradient-to-r from-banco-blue to-blue-700 px-6 py-5">
+                                <h3 class="text-xl font-bold text-white">Tu Turno Actual</h3>
                             </div>
-                            <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                            <div class="px-6 py-8">
                                 <div class="text-center">
-                                    <span class="text-5xl font-bold text-gray-900">{{ $myTurn->turn_code }}</span>
-                                    <p class="mt-2 text-lg font-medium text-gray-600">Servicio: {{ $myTurn->service->name }}</p>
-                                    <div class="mt-4 bg-yellow-100 border-l-4 border-yellow-400 p-4">
-                                        <p class="font-bold text-yellow-800">Hay {{ $turnsAhead }} personas delante de ti.</p>
+                                    <div class="bg-banco-blue rounded-2xl p-6 mb-4">
+                                        <span class="text-6xl font-extrabold text-white">{{ $myTurn->turn_code }}</span>
                                     </div>
-                                    <form action="{{ route('turn.cancel', $myTurn->id) }}" method="POST" class="mt-6">
+                                    <p class="text-xl font-semibold text-gray-700 mb-2">{{ $myTurn->service->name }}</p>
+                                    <div class="mt-6 bg-banco-yellow rounded-lg p-4">
+                                        <p class="font-bold text-banco-blue text-lg">
+                                            {{ $turnsAhead }} {{ $turnsAhead == 1 ? 'persona' : 'personas' }} delante de ti
+                                        </p>
+                                    </div>
+                                    <form action="{{ route('turn.cancel', $myTurn->id) }}" method="POST" class="mt-6" onsubmit="return confirm('¿Estás seguro de cancelar tu turno?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="w-full rounded-md bg-red-100 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-200">
+                                        <button type="submit" class="w-full rounded-lg bg-red-600 px-4 py-3 text-sm font-bold text-white hover:bg-red-700 transition shadow-md">
                                             Cancelar mi turno
                                         </button>
                                     </form>
@@ -69,16 +73,16 @@
                         </div>
 
                         @else
-                        <div class="bg-white overflow-hidden shadow rounded-lg">
-                            <div class="bg-green-600 px-4 py-5 sm:p-6">
-                                <h3 class="text-lg font-medium leading-6 text-white">Solicitar un Nuevo Turno</h3>
+                        <div class="bg-white overflow-hidden shadow-lg rounded-xl border-2 border-banco-yellow">
+                            <div class="bg-gradient-to-r from-banco-yellow to-yellow-500 px-6 py-5">
+                                <h3 class="text-xl font-bold text-banco-blue">Solicitar un Nuevo Turno</h3>
                             </div>
-                            <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                            <div class="px-6 py-8">
                                 <form action="{{ route('turn.store') }}" method="POST">
                                     @csrf
                                     <div>
-                                        <label for="service_id" class="block text-sm font-medium text-gray-700">Servicio</label>
-                                        <select name="service_id" id="service_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                                        <label for="service_id" class="block text-sm font-bold text-gray-700 mb-2">Selecciona el Servicio</label>
+                                        <select name="service_id" id="service_id" class="block w-full rounded-lg border-2 border-gray-300 px-4 py-3 focus:border-banco-blue focus:ring-2 focus:ring-banco-blue text-base" required>
                                             <option value="" disabled selected>-- Elige una opción --</option>
                                             
                                             @forelse($services as $service)
@@ -89,7 +93,7 @@
                                             
                                         </select>
                                     </div>
-                                    <button type="submit" class="mt-6 w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700">
+                                    <button type="submit" class="mt-6 w-full rounded-lg bg-banco-blue px-4 py-3 text-base font-bold text-white shadow-lg hover:bg-blue-700 transition transform hover:scale-105">
                                         Confirmar y Solicitar Turno
                                     </button>
                                 </form>
@@ -100,35 +104,38 @@
                     </div>
                     
                     <div class="md:col-span-2">
-                        <div class="bg-white overflow-hidden shadow rounded-lg">
-                            <div class="bg-gray-800 px-4 py-5 sm:p-6">
-                                <h3 class="text-lg font-medium leading-6 text-white">Cola de Turnos en Vivo</h3>
+                        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+                            <div class="bg-gradient-to-r from-banco-blue to-blue-700 px-6 py-5">
+                                <h3 class="text-xl font-bold text-white">Cola de Turnos en Vivo</h3>
                             </div>
-                            <div class="border-t border-gray-200">
-                                <table class="min-w-full divide-y divide-gray-300">
+                            <div class="overflow-hidden">
+                                <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Turno</th>
-                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Servicio</th>
-                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Estado</th>
+                                            <th scope="col" class="py-4 pl-6 pr-3 text-left text-sm font-bold text-gray-700">Turno</th>
+                                            <th scope="col" class="px-3 py-4 text-left text-sm font-bold text-gray-700">Servicio</th>
+                                            <th scope="col" class="px-3 py-4 text-left text-sm font-bold text-gray-700">Estado</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200 bg-white">
                                         @forelse ($publicTurns as $turn)
-                                            <tr class="{{ $turn->status == 'attending' ? 'bg-blue-100' : '' }}">
-                                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-2xl font-bold sm:pl-6 {{ $turn->status == 'attending' ? 'text-blue-700' : 'text-gray-900' }}">
+                                            <tr class="{{ $turn->status == 'attending' ? 'bg-banco-yellow bg-opacity-20' : 'hover:bg-gray-50' }} transition">
+                                                <td class="whitespace-nowrap py-5 pl-6 pr-3 text-3xl font-extrabold {{ $turn->status == 'attending' ? 'text-banco-blue' : 'text-gray-700' }}">
                                                     {{ $turn->turn_code }}
                                                 </td>
-                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
+                                                <td class="whitespace-nowrap px-3 py-5 text-base font-medium text-gray-700">
                                                     {{ $turn->service->name }}
                                                 </td>
-                                                <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                <td class="whitespace-nowrap px-3 py-5">
                                                     @if ($turn->status == 'attending')
-                                                        <span class="inline-flex rounded-full bg-blue-200 px-3 py-1 text-sm font-semibold leading-5 text-blue-800">
+                                                        <span class="inline-flex items-center rounded-full bg-banco-blue px-4 py-2 text-sm font-bold text-white shadow-md">
+                                                            <svg class="mr-2 h-3 w-3 animate-pulse" fill="currentColor" viewBox="0 0 8 8">
+                                                                <circle cx="4" cy="4" r="3" />
+                                                            </svg>
                                                             Atendiendo
                                                         </span>
                                                     @else
-                                                        <span class="inline-flex rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold leading-5 text-gray-800">
+                                                        <span class="inline-flex rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700">
                                                             En espera
                                                         </span>
                                                     @endif
@@ -136,8 +143,13 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="3" class="px-6 py-10 text-center text-gray-500">
-                                                    No hay turnos en espera en este momento.
+                                                <td colspan="3" class="px-6 py-12 text-center">
+                                                    <div class="text-gray-400">
+                                                        <svg class="mx-auto h-12 w-12 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        <p class="text-lg font-medium">No hay turnos en espera</p>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforelse

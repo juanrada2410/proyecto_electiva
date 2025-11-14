@@ -32,22 +32,51 @@
             </header>
             <main class="flex-1 p-8 overflow-y-auto">
                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-semibold text-gray-500">Usuarios Totales</h3>
-                        <p class="text-3xl font-bold text-banco-blue">{{ $totalUsers }}</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-banco-blue">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-gray-500 text-sm">Usuarios Totales</h3>
+                                <p class="text-3xl font-bold text-banco-blue mt-2">{{ $totalUsers }}</p>
+                            </div>
+                            <svg class="w-12 h-12 text-banco-blue opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-semibold text-gray-500">Cajeros Activos</h3>
-                        <p class="text-3xl font-bold text-banco-blue">{{ $totalCashiers }}</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-banco-yellow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-gray-500 text-sm">Cajeros Activos</h3>
+                                <p class="text-3xl font-bold text-banco-blue mt-2">{{ $totalCashiers }}</p>
+                            </div>
+                            <svg class="w-12 h-12 text-banco-yellow opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
                     </div>
-                    {{-- Tarjetas de ejemplo para el futuro --}}
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-semibold text-gray-500">Turnos Hoy</h3>
-                        <p class="text-3xl font-bold text-banco-blue">0</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-gray-500 text-sm">Turnos Hoy</h3>
+                                <p class="text-3xl font-bold text-banco-blue mt-2">{{ $turnsToday }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ $completedToday }} completados</p>
+                            </div>
+                            <svg class="w-12 h-12 text-green-500 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-semibold text-gray-500">Sucursales</h3>
-                        <p class="text-3xl font-bold text-banco-blue">1</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-gray-500 text-sm">Servicios Activos</h3>
+                                <p class="text-3xl font-bold text-banco-blue mt-2">{{ $totalServices }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ $activeTurns }} en cola</p>
+                            </div>
+                            <svg class="w-12 h-12 text-purple-500 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
                 
